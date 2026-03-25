@@ -6,7 +6,7 @@ def carregar_dados():
 
 def buscar_dados(df, buscar):
     #busca Exata
-    resultado = df[df
+    resultado = df[
         (df['IP'] == buscar) |
         (df['Setor'] == buscar) |
         (df['Nome da Máquina'] == buscar) |
