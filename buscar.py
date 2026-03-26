@@ -5,35 +5,47 @@ def carregar_dados():
     return df.astype(str)
 
 def buscar_dados(df, buscar):
-    #busca Exata
-    resultado = df[
-        (df['IP'] == buscar) |
-        (df['Setor'] == buscar) |
-        (df['Nome da Máquina'] == buscar) |
-        (df['Número de Patrimônio'] == buscar) |
-        (df['Especificação do processador'] == buscar) |
-        (df['Tipo de Memória'] == buscar) |
-        (df['Versão do Windows'] == buscar)
+
+    colunas = [
+        'IP',
+        'Sufixo',
+        'Setor',
+        'Nome da Máquina',
+        'Número de Patrimônio',
+        'Especificação do processador',
+        'Tipo de Memória',
+        'Versão do Windows'
     ]
-    
+
+    #busca Exata
+    busca_exata = False
+
+    for coluna in colunas:
+        busca_exata |= df[coluna].str.lower() == buscar.lower()
+
+    resultado = df[busca_exata]
+
     # Busca Parcial
     if resultado.empty:
-        resultado = df[
-            df['IP'].str.contains(buscar, case=False) |
-            df['Setor'].str.contains(buscar, case=False) |
-            df['Nome da Máquina'].str.contains(buscar, case=False) |
-            df['Número de Patrimônio'].str.contains(buscar, case=False) |
-            df['Especificação do processador'].str.contains(buscar, case=False) |
-            df['Tipo de Memória'].str.contains(buscar, case=False) |
-            df['Versão do Windows'].str.contains(buscar, case=False)
-        ]   
+        busca_parcial = False
+        for coluna in colunas:
+            busca_parcial |= df[coluna].str.lower().str.contains(buscar.lower(), case=False, na=False)
+        resultado = df[busca_parcial]
+    
     return resultado
 
-def main():
-    df = carregar_dados()
-    buscar = input("Digite o termo de busca: ")
-    resultado = buscar_dados(df, buscar)
+df = carregar_dados()
+
+def executar_busca(buscar):   
+    return buscar_dados(df, buscar)
     
+
+def main():
+
+    buscar = input("Digite o termo de busca: ").strip()
+
+    resultado = executar_busca(buscar)
+
     if resultado.empty:
         print("\n❌ Nenhum resultado encontrado\n")
     else:
